@@ -98,6 +98,8 @@ public class MainActivity extends AppCompatActivity {
             case R.drawable.f_03:
                 break;
             case R.drawable.f_04:
+                Intent intent = new Intent(this, ContactActivity.class);
+                startActivity(intent);
                 break;
             case R.drawable.f_05:
                 finish();
