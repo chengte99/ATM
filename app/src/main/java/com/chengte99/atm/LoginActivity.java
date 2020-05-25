@@ -7,6 +7,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 
 import com.chengte99.atm.databinding.ActivityLoginBinding;
 import com.google.firebase.database.DataSnapshot;
@@ -25,6 +27,19 @@ public class LoginActivity extends AppCompatActivity {
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        binding.cbRemUserid.setChecked(
+                getSharedPreferences("atm", MODE_PRIVATE).getBoolean("REMEMBER_USERID", false)
+        );
+
+        binding.cbRemUserid.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                getSharedPreferences("atm", MODE_PRIVATE).edit()
+                        .putBoolean("REMEMBER_USERID", b)
+                        .commit();
+            }
+        });
+
         String acc_storage = getSharedPreferences("atm", MODE_PRIVATE).getString("ACC", "");
         Log.d(TAG, "onCreate: " + acc_storage);
         binding.account.setText(acc_storage);
@@ -42,9 +57,12 @@ public class LoginActivity extends AppCompatActivity {
                         String pw = (String) dataSnapshot.getValue();
                         if (pw.equals(password)) {
 
-                            getSharedPreferences("atm", MODE_PRIVATE).edit()
-                                    .putString("ACC", account)
-                                    .apply();
+                            boolean isRem = getSharedPreferences("atm", MODE_PRIVATE).getBoolean("REMEMBER_USERID", false);
+                            if (isRem) {
+                                getSharedPreferences("atm", MODE_PRIVATE).edit()
+                                        .putString("ACC", account)
+                                        .apply();
+                            }
 
                             setResult(RESULT_OK);
                             finish();
