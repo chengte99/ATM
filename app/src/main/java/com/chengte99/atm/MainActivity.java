@@ -96,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
             case R.drawable.f_02:
                 break;
             case R.drawable.f_03:
+                startActivity(new Intent(this, FinanceActivity.class));
                 break;
             case R.drawable.f_04:
                 Intent intent = new Intent(this, ContactActivity.class);

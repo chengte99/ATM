@@ -34,12 +34,12 @@ public class LoginActivity extends AppCompatActivity {
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
-        if (permission == PackageManager.PERMISSION_GRANTED) {
-            toCapture();
-        }else {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAM);
-        }
+//        int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+//        if (permission == PackageManager.PERMISSION_GRANTED) {
+//            toCapture();
+//        }else {
+//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAM);
+//        }
 
         binding.cbRemUserid.setChecked(
                 getSharedPreferences("atm", MODE_PRIVATE).getBoolean("REMEMBER_USERID", false)
