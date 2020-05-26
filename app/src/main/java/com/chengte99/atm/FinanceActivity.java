@@ -5,9 +5,12 @@ import androidx.room.Room;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.chengte99.atm.data.Expense;
 import com.chengte99.atm.data.ExpenseDataBase;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -29,7 +32,7 @@ public class FinanceActivity extends AppCompatActivity {
             public void run() {
                 ExpenseDataBase.getInstance(FinanceActivity.this)
                         .expenseDAO()
-                        .insert(new Expense("2020-05-26", "parking", 50));
+                        .insert(new Expense("2020-05-26", "dinner", 210));
             }
         }).start();
 
@@ -48,6 +51,37 @@ public class FinanceActivity extends AppCompatActivity {
                 }
             }
         });
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_finance, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.upload_expense_to_firebase) {
+            final String userid = getSharedPreferences("atm", MODE_PRIVATE).getString("ACC", null);
+            if (userid != null) {
+                ExecutorService executorService = Executors.newSingleThreadExecutor();
+                executorService.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<Expense> expenses = ExpenseDataBase.getInstance(FinanceActivity.this)
+                                .expenseDAO()
+                                .getAll();
+
+                        FirebaseDatabase.getInstance()
+                                .getReference("users")
+                                .child(userid)
+                                .child("expense")
+                                .setValue(expenses);
+                    }
+                });
+            }
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
