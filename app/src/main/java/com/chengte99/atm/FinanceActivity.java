@@ -22,13 +22,14 @@ public class FinanceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_finance);
 
-        final ExpenseDataBase expenseDataBase = Room.databaseBuilder(this,
-                ExpenseDataBase.class, "expense.db").build();
+//        final ExpenseDataBase expenseDataBase = ExpenseDataBase.getInstance(this);
 
         new Thread(new Runnable() {
             @Override
             public void run() {
-                expenseDataBase.expenseDAO().insert(new Expense("2020-05-26", "parking", 50));
+                ExpenseDataBase.getInstance(FinanceActivity.this)
+                        .expenseDAO()
+                        .insert(new Expense("2020-05-26", "parking", 50));
             }
         }).start();
 
@@ -36,7 +37,9 @@ public class FinanceActivity extends AppCompatActivity {
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-                List<Expense> expenses = expenseDataBase.expenseDAO().getAll();
+                List<Expense> expenses = ExpenseDataBase.getInstance(FinanceActivity.this)
+                        .expenseDAO()
+                        .getAll();
                 for (Expense expense : expenses) {
                     Log.d(TAG, "expenses: " +
                             expense.getDate() + "/" +
