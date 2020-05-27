@@ -9,18 +9,24 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.Toast;
 
 import com.chengte99.atm.databinding.ActivityLoginBinding;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -34,17 +40,43 @@ public class LoginActivity extends AppCompatActivity {
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-//        int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
-//        if (permission == PackageManager.PERMISSION_GRANTED) {
-//            toCapture();
-//        }else {
-//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAM);
-//        }
+//        cameraFunc();
 
-        binding.cbRemUserid.setChecked(
-                getSharedPreferences("atm", MODE_PRIVATE).getBoolean("REMEMBER_USERID", false)
-        );
+        setRemAcc();
 
+//        new TestTask().execute("http://tw.yahoo.com");
+    }
+
+    public class TestTask extends AsyncTask<String, Void, Integer> {
+        @Override
+        protected void onPreExecute() {
+            Toast.makeText(LoginActivity.this, "onPreExecute", Toast.LENGTH_LONG).show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            Toast.makeText(LoginActivity.this, "onPostExecute" + integer, Toast.LENGTH_LONG).show();
+            super.onPostExecute(integer);
+        }
+
+        @Override
+        protected Integer doInBackground(String... strings) {
+            int data = 0;
+            try {
+                URL url = new URL(strings[0]);
+                data = url.openStream().read();
+                Log.d(TAG, "TestTask: " + data);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return data;
+        }
+    }
+
+    private void setRemAcc() {
         binding.cbRemUserid.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -54,9 +86,23 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        String acc_storage = getSharedPreferences("atm", MODE_PRIVATE).getString("ACC", "");
-        Log.d(TAG, "onCreate: " + acc_storage);
-        binding.account.setText(acc_storage);
+        boolean isRemACC = getSharedPreferences("atm", MODE_PRIVATE).getBoolean("REMEMBER_USERID", false);
+        if (isRemACC) {
+            binding.cbRemUserid.setChecked(isRemACC);
+
+            String acc_storage = getSharedPreferences("atm", MODE_PRIVATE).getString("ACC", "");
+            Log.d(TAG, "onCreate: " + acc_storage);
+            binding.account.setText(acc_storage);
+        }
+    }
+
+    private void cameraFunc() {
+        int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+        if (permission == PackageManager.PERMISSION_GRANTED) {
+            toCapture();
+        }else {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAM);
+        }
     }
 
     private void toCapture() {

@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
         switch (function.getIcon()) {
             case R.drawable.f_01:
+                startActivity(new Intent(this, TransActivity.class));
                 break;
             case R.drawable.f_02:
                 break;
