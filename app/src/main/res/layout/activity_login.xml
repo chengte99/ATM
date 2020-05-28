@@ -10,6 +10,7 @@
         android:id="@+id/imageView"
         android:layout_width="219dp"
         android:layout_height="138dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -94,4 +95,16 @@
         android:text="記憶帳號"
         app:layout_constraintStart_toEndOf="@+id/account"
         app:layout_constraintTop_toTopOf="@+id/account" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/container_news"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="1dp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

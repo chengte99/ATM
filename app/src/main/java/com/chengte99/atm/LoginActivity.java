@@ -5,6 +5,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
 import android.content.Intent;
@@ -40,10 +42,13 @@ public class LoginActivity extends AppCompatActivity {
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.container_news, FragmentNews.getInstance());
+        fragmentTransaction.commit();
+
 //        cameraFunc();
-
         setRemAcc();
-
 //        new TestTask().execute("http://tw.yahoo.com");
     }
 
