@@ -9,14 +9,16 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 
@@ -35,6 +37,28 @@ public class LoginActivity extends AppCompatActivity {
     private static final String TAG = LoginActivity.class.getSimpleName();
     private static final int REQUEST_CAM = 5;
     private ActivityLoginBinding binding;
+    private Intent helloIntent;
+
+    BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "onReceive: Hello: " + intent.getAction());
+            Toast.makeText(LoginActivity.this, "HelloService done", Toast.LENGTH_LONG).show();
+        }
+    };
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        IntentFilter filter = new IntentFilter(HelloService.ACTION_HELLO_DONE);
+        registerReceiver(receiver, filter);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+//        stopService(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,10 +66,16 @@ public class LoginActivity extends AppCompatActivity {
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        //Fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(R.id.container_news, FragmentNews.getInstance());
         fragmentTransaction.commit();
+
+        //Service
+        helloIntent = new Intent(this, HelloService.class);
+        helloIntent.putExtra("NAME", "T1");
+        startService(helloIntent);
 
 //        cameraFunc();
         setRemAcc();
