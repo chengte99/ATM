@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.chengte99.atm.model.RequestParameter;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -33,6 +34,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -56,6 +58,44 @@ public class TransActivity extends AppCompatActivity {
 
 //        new TransTask().execute("https://atm201605.appspot.com/h");
 
+        okhttpGet();
+//        okhttpPOST();
+    }
+
+    private void okhttpPOST() {
+        List<RequestParameter> parameters = new ArrayList<>();
+        parameters.add(new RequestParameter("CrlMode", "appctl"));
+        parameters.add(new RequestParameter("App", "gbb"));
+        parameters.add(new RequestParameter("IsDev", "1"));
+
+        FormBody.Builder builder = new FormBody.Builder();
+        if (parameters != null && parameters.size() > 0) {
+            for (RequestParameter parameter : parameters) {
+                builder.add(parameter.getName(), parameter.getValue());
+            }
+        }
+        RequestBody formBody = builder.build();
+
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url("http://ctl.5282288.net/appmenu_api/listApm.php")
+                .post(formBody)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                String resStr = response.body().string();
+                Log.d(TAG, "onResponse: " + resStr);
+            }
+        });
+    }
+
+    private void okhttpGet() {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url("https://atm201605.appspot.com/h")
@@ -80,7 +120,6 @@ public class TransActivity extends AppCompatActivity {
                 });
             }
         });
-
     }
 
     private void parseGSON(String json) {
